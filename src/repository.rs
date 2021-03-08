@@ -1,7 +1,7 @@
 use crate::user::User;
 use uuid::Uuid;
-pub trait Repository {
-    fn get_user(&self, user_id: Uuid) -> Result<User, String>;
+pub trait Repository: Send + Sync + 'static {
+    fn get_user(&self, user_id: &Uuid) -> Result<User, String>;
 }
 pub struct MemoryReposiory {
     users: Vec<User>,
@@ -15,11 +15,11 @@ impl Default for MemoryReposiory {
 }
 
 impl Repository for MemoryReposiory {
-    fn get_user(&self, user_id: uuid::Uuid) -> Result<User, String> {
+    fn get_user(&self, user_id: &Uuid) -> Result<User, String> {
         self.users
             .iter()
-            .find(|u| u.id == user_id)
-            .map(|u| u.clone())
+            .find(|u| &u.id == user_id)
+            .cloned()
             .ok_or_else(|| "invalid UUID".to_string())
     }
 }
