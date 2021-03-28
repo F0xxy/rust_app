@@ -1,32 +1,32 @@
 use chrono::{DateTime, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct User {
-    pub id: Uuid,
+    pub id: uuid::Uuid,
     pub name: String,
-    pub custom_data: CustomData,
     pub birth_date: NaiveDate,
+    pub custom_data: CustomData,
     pub created_at: Option<DateTime<Utc>>,
     pub updated_at: Option<DateTime<Utc>>,
-    pub deleted_at: Option<DateTime<Utc>>,
 }
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct CustomData {
-    pub random: u32,
-}
+
 impl User {
     pub fn new(name: String, birth_date_ymd: (i32, u32, u32)) -> Self {
-        let (y, m, d) = birth_date_ymd;
+        let (year, month, day) = birth_date_ymd;
+        let id = uuid::Uuid::parse_str("356e42a8-e659-406f-98bb-6124414675e9").unwrap();
         Self {
-            id: Uuid::parse_str("87d512c3-9141-46aa-a642-3d2673fa58ca").unwrap(),
+            id,
             name,
-            birth_date: NaiveDate::from_ymd(y, m, d),
+            birth_date: NaiveDate::from_ymd(year, month, day),
             custom_data: CustomData { random: 1 },
             created_at: Some(Utc::now()),
             updated_at: None,
-            deleted_at: None,
         }
     }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct CustomData {
+    pub random: u32,
 }
